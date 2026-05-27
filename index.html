@@ -191,7 +191,7 @@ tr:hover td{background:var(--bg);}
     <div class="header-icon">🐱</div>
     <div>
       <h1>排班系統</h1>
-      <p>2025年5月29日 — 6月20日</p>
+      <p>2026年5月29日 — 2026年6月20日</p>
     </div>
     <div class="header-right">
       <button class="logout-btn" onclick="doLogout()">登出</button>
@@ -334,16 +334,16 @@ const PASSWORDS = ['1234'];  // ← 可改成你們想要的密碼
 const COLORS=['#1D9E75','#378ADD','#D85A30','#D4537E','#BA7517','#7F77DD','#639922','#E24B4A','#884400','#5F5E5A'];
 const DAYS=['日','一','二','三','四','五','六'];
 const SHIFTS={early:{label:'早班',time:'07:00–12:00',cls:'sp-early'},noon:{label:'午班',time:'12:00–18:00',cls:'sp-noon'},late:{label:'晚班',time:'18:00–22:00',cls:'sp-late'}};
-const START=new Date(2025,4,29), END=new Date(2025,5,20);
+const START=new Date(2026,4,29), END=new Date(2026,5,20);
 const WL=['未觀察','少','正常','多'], TL=['未觀察','異常','正常'], ML=['未觀察','差','普通','好'];
 const TYPE_INFO={handover:{cls:'nt-handover',label:'交接事項'},note:{cls:'nt-note',label:'一般備註'},alert:{cls:'nt-alert',label:'注意事項'}};
 
 // ════════════════════════════════
 //  狀態
 // ════════════════════════════════
-let members=['小明','小美','阿志','淑芬'];
+let members=['力心','清奕','杰驛'];
 let schedules={}, logs={}, drugItems=[], drugRecords=[], notesData=[];
-let curMonth=4, curYear=2025;
+let curMonth=4, curYear=2026;
 let pendingPhotos=[];
 let saveTimer=null;
 
@@ -503,8 +503,8 @@ function renderCalendar(){
     grid.appendChild(el);
   }
 }
-function prevMonth(){if(curMonth===4&&curYear===2025)return;curMonth===0?(curMonth=11,curYear--):curMonth--;renderCalendar();}
-function nextMonth(){if(curMonth===5&&curYear===2025)return;curMonth===11?(curMonth=0,curYear++):curMonth++;renderCalendar();}
+function prevMonth(){if(curMonth===4&&curYear===2026)return;curMonth===0?(curMonth=11,curYear--):curMonth--;renderCalendar();}
+function nextMonth(){if(curMonth===5&&curYear===2026)return;curMonth===11?(curMonth=0,curYear++):curMonth++;renderCalendar();}
 
 // ════════════════════════════════
 //  日期彈窗
