@@ -360,10 +360,7 @@ function doLogout(){
   location.reload();
 }
 // 已登入則直接顯示主畫面
-if(sessionStorage.getItem('catcare_auth')==='1'){
-  document.getElementById('login-screen').classList.add('hidden');
-  document.getElementById('main-app').style.display='block';
-}
+
 
 // ════════════════════════════════
 //  Google Sheets 同步
