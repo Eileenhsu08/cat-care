@@ -174,16 +174,7 @@ tr:hover td{background:var(--bg);}
 <body>
 
 <!-- 登入畫面 -->
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-icon">🐱</div>
-    <h2>照顧米花大作戰</h2>
-    <p>請輸入密碼以進入</p>
-    <input type="password" id="pw-input" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()">
-    <button onclick="doLogin()">進入系統</button>
-    <div class="login-err" id="login-err"></div>
-  </div>
-</div>
+<div id="login-screen" class="hidden"></div>
 
 <!-- 主畫面 -->
 <div class="container" id="main-app" style="display:none;">
@@ -298,7 +289,7 @@ tr:hover td{background:var(--bg);}
     </div>
     <div class="card">
       <div class="section-label" style="margin-bottom:10px;">排班統計</div>
-      <table><thead><tr><th>人員</th><th>總班</th><th>早班</th><th>午班</th><th>晚班</th><th>已簽到</th><th>日誌</th></tr></thead>
+      <table><thead><tr><th>人員</th><th>總班</th><th>早班</th><th>午班</th><th>晚班</th><th>總時數</th><th>已簽到</th><th>日誌</th></tr></thead>
       <tbody id="member-stats"></tbody></table>
     </div>
   </div>
@@ -611,10 +602,27 @@ function renderStats(){
   syncMemberSelect('f-member');
 }
 function renderSignin(){
-  renderStats();
+ const SHIFT_HOURS={early:5,noon:6,late:4};
+
+function renderStats(){
+  const all=getAllScheds();
+  const signed=all.filter(s=>s.signed).length;
+  const totalLogs=Object.values(logs).reduce((a,b)=>a+b.length,0);
+  document.getElementById('stats-grid').innerHTML=`
+    <div class="stat-card"><div class="stat-label">總班次</div><div class="stat-val">${all.length}</div></div>
+    <div class="stat-card"><div class="stat-label">已簽到</div><div class="stat-val" style="color:var(--green);">${signed}</div></div>
+    <div class="stat-card"><div class="stat-label">未簽到</div><div class="stat-val" style="color:#BA7517;">${all.length-signed}</div></div>
+    <div class="stat-card"><div class="stat-label">日誌總數</div><div class="stat-val">${totalLogs}</div></div>`;
+  syncMemberSelect('f-member');
+}
+function renderSignin(){
   const mf=document.getElementById('f-member').value;
   const sf=document.getElementById('f-status').value;
   const shf=document.getElementById('f-shift').value;
+  renderStats();
+  document.getElementById('f-member').value=mf;
+  document.getElementById('f-status').value=sf;
+  document.getElementById('f-shift').value=shf;
   let all=getAllScheds();
   if(mf)all=all.filter(s=>s.member===mf);
   if(sf==='signed')all=all.filter(s=>s.signed);
@@ -904,16 +912,21 @@ function removeMember(name){
 }
 function renderMemberStats(){
   const tb=document.getElementById('member-stats');
-  if(!members.length){tb.innerHTML='<tr><td colspan="7"><div class="empty">尚無人員</div></td></tr>';return;}
+  if(!members.length){tb.innerHTML='<tr><td colspan="8"><div class="empty">尚無人員</div></td></tr>';return;}
   tb.innerHTML=members.map(m=>{
     const all=getAllScheds().filter(s=>s.member===m);
+    const earlyN=all.filter(s=>s.shift==='early').length;
+    const noonN=all.filter(s=>s.shift==='noon').length;
+    const lateN=all.filter(s=>s.shift==='late').length;
+    const totalHrs=earlyN*SHIFT_HOURS.early+noonN*SHIFT_HOURS.noon+lateN*SHIFT_HOURS.late;
     const myLogs=Object.values(logs).flat().filter(l=>l.member===m).length;
     return`<tr>
       <td><span class="mdot" style="background:${mc(m)};"></span> ${m}</td>
       <td>${all.length}</td>
-      <td>${all.filter(s=>s.shift==='early').length}</td>
-      <td>${all.filter(s=>s.shift==='noon').length}</td>
-      <td>${all.filter(s=>s.shift==='late').length}</td>
+      <td>${earlyN}</td>
+      <td>${noonN}</td>
+      <td>${lateN}</td>
+      <td style="font-weight:500;">${totalHrs} h</td>
       <td style="color:var(--green);">${all.filter(s=>s.signed).length}</td>
       <td>${myLogs}</td>
     </tr>`;
@@ -937,12 +950,8 @@ function closeModalIfBg(e){if(e.target===document.getElementById('modal-overlay'
 // ════════════════════════════════
 //  啟動
 // ════════════════════════════════
-if(sessionStorage.getItem('catcare_auth')==='1'){
-  loadFromSheet();
-} else {
-  // 尚未登入，只渲染空白日曆（不載入資料）
-  renderCalendar();
-}
+document.getElementById('main-app').style.display='block';
+loadFromSheet();
 </script>
 </body>
 </html>
